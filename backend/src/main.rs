@@ -1,5 +1,7 @@
 mod store;
 
+use std::env;
+
 use axum::{
     debug_handler,
     extract::{Path, Query, State},
@@ -91,7 +93,9 @@ async fn main() {
         .with_max_level(tracing::Level::DEBUG)
         .init();
 
-    let db = PgPool::connect(env!("DATABASE_URL")).await.unwrap();
+    let db = PgPool::connect(&env::var("DATABASE_URL").unwrap())
+        .await
+        .unwrap();
     tracing::info!("Connected to database");
     let store = Store::new(db);
 
@@ -107,7 +111,7 @@ async fn main() {
         .layer(trace)
         .nest_service("/", ServeDir::new("static"));
 
-    let address = "127.0.0.1:5150";
+    let address = "0.0.0.0:8080";
     let listener = tokio::net::TcpListener::bind(address).await.unwrap();
     tracing::info!("Listening on {}", address);
     axum::serve(listener, app).await.unwrap();
