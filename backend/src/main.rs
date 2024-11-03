@@ -108,8 +108,8 @@ async fn main() {
         .route("/api/notes/:note_id", put(update_note))
         .route("/api/notes/:note_id", delete(delete_note))
         .with_state(store)
-        .layer(trace)
-        .nest_service("/", ServeDir::new("static"));
+        .nest_service("/", ServeDir::new("static"))
+        .layer(trace);
 
     let address = "0.0.0.0:8080";
     let listener = tokio::net::TcpListener::bind(address).await.unwrap();
