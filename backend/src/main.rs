@@ -11,7 +11,7 @@ use sqlx::types::time::Date;
 use sqlx::PgPool;
 use store::{Guest, Note, Store};
 use time::serde::format_description;
-use tower_http::{cors::CorsLayer, trace::TraceLayer};
+use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
 
 format_description!(naive_date_format, Date, "[year]-[month]-[day]");
 
@@ -106,7 +106,8 @@ async fn main() {
         .route("/api/notes/:note_id", delete(delete_note))
         .with_state(store)
         .layer(trace)
-        .layer(cors);
+        .layer(cors)
+        .nest_service("/", ServeDir::new("static"));
 
     let address = "127.0.0.1:5150";
     let listener = tokio::net::TcpListener::bind(address).await.unwrap();
