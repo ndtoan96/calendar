@@ -1,6 +1,6 @@
 import { isSameDay, toYearMonthDay } from "./utils";
 
-const SERVER = "http://localhost:5150";
+const SERVER = "";
 
 export type NoteData = {
     id: number;
