@@ -91,9 +91,7 @@ async fn main() {
         .with_max_level(tracing::Level::DEBUG)
         .init();
 
-    let db = PgPool::connect("postgresql://postgres:tlmd@localhost:5432/calendar")
-        .await
-        .unwrap();
+    let db = PgPool::connect(env!("DATABASE_URL")).await.unwrap();
     tracing::info!("Connected to database");
     let store = Store::new(db);
 
